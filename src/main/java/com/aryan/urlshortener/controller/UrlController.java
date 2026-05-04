@@ -71,11 +71,42 @@ public class UrlController {
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, "Link not found"));
         }
+
+        shortUrl.get().setClickCount(shortUrl.get().getClickCount()+1);
+        shortUrlRepo.save(shortUrl.get());
+
         String originalUrl=shortUrl.get().getOriginalUrl();
         headers.add("Location", originalUrl);
         return new ResponseEntity<>(
             headers,
             HttpStatus.MOVED_PERMANENTLY
         );
+    }
+
+    @GetMapping("/api/{shortcode}/analytics")
+    public ResponseEntity<?> getUrlAnalytics(
+        @PathVariable("shortcode") String shortcode
+    ) {
+        Optional<ShortUrl> shortUrl=shortUrlRepo.findByShortUrl(shortcode);
+        if(shortUrl.isEmpty())
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, "Link not found"));
+        }
+        Integer clickCount=shortUrl.get().getClickCount();
+        return ResponseEntity.status(HttpStatus.OK).body(new GetUrlAnalytics(true, clickCount));
+    }
+
+    @GetMapping("/api/{shortcode}")
+    public ResponseEntity<?> getUrl(
+        @PathVariable("shortcode") String shortcode
+    ) {
+        Optional<ShortUrl> shortUrl=shortUrlRepo.findByShortUrl(shortcode);
+        if(shortUrl.isEmpty())
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(false, "Link not found"));
+        }
+        Integer clickCount=shortUrl.get().getClickCount();
+        String originalUrl=shortUrl.get().getOriginalUrl();
+        return ResponseEntity.status(HttpStatus.OK).body(new GetUrl(true, clickCount, originalUrl, shortcode));
     }
 }
