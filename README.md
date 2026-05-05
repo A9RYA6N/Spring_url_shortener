@@ -20,7 +20,6 @@ A robust, production-ready URL Shortener API built with Spring Boot and PostgreS
   - Spring Data JPA (Hibernate for ORM)
   - Spring Validation (Jakarta constraints)
 - **PostgreSQL** (Database)
-- **Lombok** (Boilerplate code reduction)
 - **Maven** (Build Tool)
 
 ---
